@@ -80,8 +80,17 @@ public class PerceptronWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if ( !points.isEmpty() ) {
-                    points.remove(points.size() - 1);
-                    map.repaint();
+                    int idxPoint = -1;
+                    for ( int i = points.size() - 1; i >= 0; i-- ) {
+                        if ( !points.get(i).sweep ) {
+                            idxPoint = i;
+                            break;
+                        }
+                    }
+                    if ( idxPoint != -1 ) {
+                        points.remove(idxPoint);
+                        map.repaint();
+                    }
                 }
             }
         });
@@ -91,7 +100,13 @@ public class PerceptronWindow extends JFrame {
         jmiClearInstances.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                points.clear();
+                ArrayList<Point> newPoints = new ArrayList<>();
+                for ( Point point : points ) {
+                    if ( point.sweep ) {
+                        newPoints.add(point);
+                    }
+                }
+                points = newPoints;
                 map.repaint();
             }
         });
@@ -146,14 +161,69 @@ public class PerceptronWindow extends JFrame {
         });
 
         // Agregar una nueva instancia
-        JRadioButtonMenuItem jmNewInstance = new JRadioButtonMenuItem("Nueva instancia");
-        bgPredict.add(jmNewInstance);
-        jmPredict.add(jmNewInstance);
+        JRadioButtonMenuItem jmiNewInstance = new JRadioButtonMenuItem("Nueva instancia");
+        bgPredict.add(jmiNewInstance);
+        jmPredict.add(jmiNewInstance);
         jmPredict.setVisible(false);
-        jmNewInstance.addActionListener(new ActionListener() {
+        jmiNewInstance.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addInstanceEnable = true;
+            }
+        });
+
+        // Mostrar barrido
+        JMenuItem jmiShowSweep = new JMenuItem("Mostrar barrido");
+        jmPredict.add(jmiShowSweep);
+        jmiShowSweep.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( !changeWeights ) {
+                    for ( int i = 0; i <= map.getWidth(); i+= RADIUS_POINT ) {
+                        for ( int j = 0; j <= map.getHeight(); j+= RADIUS_POINT ) {
+                            Point point = new Point();
+                            point.xMap = i;
+                            point.yMap = j;
+                            point.x = ( i >= MAP_WIDTH * 0.5 ) ? i - ( MAP_WIDTH * 0.5 ) : -((MAP_WIDTH * 0.5) - i);
+                            point.x /= (MAP_WIDTH * 0.5) / MAP_SCALE;
+                            point.y = ( j > MAP_HEIGHT * 0.5 ) ? -(j - (MAP_HEIGHT * 0.5)) : (MAP_HEIGHT * 0.5) - j;
+                            point.y /= (MAP_HEIGHT * 0.5) / MAP_SCALE;
+                            Object[] instance = new Object[2];
+                            instance[0] = point.x;
+                            instance[1] = point.y;
+                            double result = 0;
+                            try {
+                                result = model.predict(instance);
+                                point.leftClick = result == 0.0;
+                                point.sweep = true;
+                                points.add(point);
+                                repaint();
+                            } catch (Exception ex) {
+                                System.out.println("No se pudo realizar el barrido");
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Eliminar barrido
+        JMenuItem jmiHideSweep = new JMenuItem("Ocultar barrido");
+        jmPredict.add(jmiHideSweep);
+        jmiHideSweep.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if ( !changeWeights ) {
+                    ArrayList<Point> newPoints = new ArrayList<>();
+                    for ( Point point : points ) {
+                        if ( !point.sweep ) {
+                            newPoints.add(point);
+                        }
+                    }
+                    points = newPoints;
+                    map.repaint();
+                }
             }
         });
 
@@ -188,6 +258,7 @@ public class PerceptronWindow extends JFrame {
                         double result = model.predict(instance);
                         JOptionPane.showMessageDialog(null, "La nueva instancia es: " + ((result == 0.0) ? "circulo azul" : "cuadrado verde"), "Resultado", JOptionPane.INFORMATION_MESSAGE);
                         point.leftClick = result == 0.0;
+                        point.sweep = false;
                         points.add(point);
                         repaint();
                     } catch (Exception ex) {
@@ -199,6 +270,7 @@ public class PerceptronWindow extends JFrame {
                 if ( (e.getButton() != MouseEvent.BUTTON1 && e.getButton() != MouseEvent.BUTTON3) || !clickEnable || !addInstanceEnable ) {
                     return;
                 }
+                point.sweep = false;
                 // Boton izquierdo
                 if ( e.getButton() == MouseEvent.BUTTON1 ) {
                     point.leftClick = true;
@@ -211,7 +283,16 @@ public class PerceptronWindow extends JFrame {
                 }
                 System.out.println("Nuevo punto agregado: " + point);
                 jmPredict.setVisible(false);
-                modelEnable = false;
+                if ( modelEnable ) {
+                    modelEnable = false;
+                    ArrayList<Point> newPoints = new ArrayList<>();
+                    for ( Point tmpPoint : points ) {
+                        if ( !tmpPoint.sweep ) {
+                            newPoints.add(tmpPoint);
+                        }
+                    }
+                    points = newPoints;
+                }
                 map.repaint();
             }
         });
@@ -385,10 +466,19 @@ public class PerceptronWindow extends JFrame {
                     JOptionPane.showMessageDialog(null, "Ingrese por minimo una instancia", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                // Deshabilitamos la interfaz temporalmente
+                // Deshabilitamos la interfaz temporalmente y otras cosas
                 changeUIForPerceptron(false);
                 clickEnable = false;
-
+                // Eliminamos los puntos de barrido
+                ArrayList<Point> newPoints = new ArrayList<>();
+                for ( Point tmpPoint : points ) {
+                    if ( !tmpPoint.sweep ) {
+                        newPoints.add(tmpPoint);
+                    }
+                }
+                points = newPoints;
+                map.repaint();
+                // Creacion del conjunto de datos
                 String[] headers = { "x_1", "x_2", "y" };
                 String[] attributeTypes = { DataSet.NUMERIC_TYPE, DataSet.NUMERIC_TYPE, DataSet.NUMERIC_TYPE };
                 DataSet dataSet;
@@ -545,18 +635,26 @@ public class PerceptronWindow extends JFrame {
             for ( Point point : points ) {
                 if ( point.leftClick ) {
                     g.setColor(LEFTCLICK_COLOR);
-                    g.fillOval(point.xMap - RADIUS_POINT, point.yMap - RADIUS_POINT, RADIUS_POINT * 2, RADIUS_POINT * 2);
+                    if ( point.sweep ) {
+                        g.drawOval(point.xMap - RADIUS_POINT, point.yMap - RADIUS_POINT, RADIUS_POINT * 2, RADIUS_POINT * 2);
+                    } else {
+                        g.fillOval(point.xMap - RADIUS_POINT, point.yMap - RADIUS_POINT, RADIUS_POINT * 2, RADIUS_POINT * 2);
+                    }
                 } else {
                     g.setColor(RIGHTCLICK_COLOR);
-                    g.fillRect(point.xMap - RADIUS_POINT, point.yMap - RADIUS_POINT, RADIUS_POINT * 2, RADIUS_POINT * 2);
+                    if ( point.sweep ) {
+                        g.drawRect(point.xMap - RADIUS_POINT, point.yMap - RADIUS_POINT, RADIUS_POINT * 2, RADIUS_POINT * 2);
+                    } else {
+                        g.fillRect(point.xMap - RADIUS_POINT, point.yMap - RADIUS_POINT, RADIUS_POINT * 2, RADIUS_POINT * 2);
+                    }
                 }
             }
             // Dibujamos la línea del perceptron
             g.setColor(Color.RED);
             double x1_1 = MAP_SCALE + 1.0;
-            double x2_1 = 0.0;
+            double x2_1 = Double.NaN;
             double x1_2 = -MAP_SCALE - 1.0;
-            double x2_2 = 0.0;
+            double x2_2 = Double.NaN;
             if ( weights[1] == 0.0 && weights[2] != 0.0 || weights[1] != 0.0 && weights[2] != 0.0 ) {
                 x2_1 = ( -weights[1] * x1_1 + weights[0] ) / weights[2];
                 x2_2 = ( -weights[1] * x1_2 + weights[0] ) / weights[2];
@@ -586,6 +684,7 @@ public class PerceptronWindow extends JFrame {
         public double x;
         public double y;
         public boolean leftClick;
+        public boolean sweep;
 
         @Override
         public String toString() {
@@ -595,9 +694,9 @@ public class PerceptronWindow extends JFrame {
                     ", x=" + x +
                     ", y=" + y +
                     ", leftClick=" + leftClick +
+                    ", sweep=" + sweep +
                     '}';
         }
-
     }
 
     private class CustomKeyListener extends KeyAdapter {
@@ -646,17 +745,26 @@ public class PerceptronWindow extends JFrame {
                 double weigth = Double.parseDouble(txtField.getText());
                 if ( weigth != weights[idxWeight] ) {
                     weights[idxWeight] = weigth;
-                    jmPredict.setVisible(false);
-                    modelEnable = false;
-                    addInstanceEnable = true;
+                    changeWeights = true;
                 }
             } catch (Exception ex) {
                 weights[idxWeight] = 0;
-                jmPredict.setVisible(false);
-                modelEnable = false;
-                addInstanceEnable = true;
+                changeWeights = true;
+            } finally {
+                if ( modelEnable && changeWeights ) {
+                    modelEnable = false;
+                    jmPredict.setVisible(false);
+                    addInstanceEnable = true;
+                    ArrayList<Point> newPoints = new ArrayList<>();
+                    for ( Point tmpPoint : points ) {
+                        if ( !tmpPoint.sweep ) {
+                            newPoints.add(tmpPoint);
+                        }
+                    }
+                    points = newPoints;
+                }
+                map.repaint();
             }
-            map.repaint();
         }
 
     }
