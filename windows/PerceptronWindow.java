@@ -131,7 +131,7 @@ public class PerceptronWindow extends JFrame {
                 txtWeight2.setText(String.valueOf(weights[2]));
                 txtLearningRate.setText("0.");
                 txtEpochs.setText("");
-                lblEpochResult.setText("<html>Época: <b>0</b></html>");
+                lblEpochResult.setText("<html>Epoca: <b>0</b></html>");
                 addInstanceEnable = true;
                 jmPredict.setVisible(false);
             }
@@ -324,7 +324,7 @@ public class PerceptronWindow extends JFrame {
         add(lblScaleWest);
 
         // Subtitulo de la ventana
-        JLabel lblSubtitle = new JLabel("Configuración de los parámetros");
+        JLabel lblSubtitle = new JLabel("Configuracion de los parametros");
         lblSubtitle.setLocation(map.getX() + map.getWidth() + 40, map.getY());
         lblSubtitle.setSize(getWidth() - (map.getX() + map.getWidth() + 75), 20);
         lblSubtitle.setHorizontalAlignment(JLabel.CENTER);
@@ -359,7 +359,7 @@ public class PerceptronWindow extends JFrame {
         add(txtLearningRate);
 
         // Epocas
-        JLabel lblEpochs = new JLabel("Épocas: ");
+        JLabel lblEpochs = new JLabel("Epocas: ");
         lblEpochs.setSize(lblLearningRate.getSize());
         lblEpochs.setLocation(lblLearningRate.getX(), lblLearningRate.getY() + lblLearningRate.getHeight() + 20);
         lblEpochs.setFont(new Font("Dialog", Font.PLAIN, 16));
@@ -459,11 +459,11 @@ public class PerceptronWindow extends JFrame {
                     learningRate = Double.parseDouble(txtLearningRate.getText());
                     epochs = Integer.parseInt(txtEpochs.getText());
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Parámetros del modelo no especificados", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Parametros del modelo no especificados", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if ( epochs <= 0 ) {
-                    JOptionPane.showMessageDialog(null, "Las épocas no pueden ser 0 o menos", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Las epocas no pueden ser 0 o menos", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if ( points.size() < 1 ) {
@@ -526,7 +526,7 @@ public class PerceptronWindow extends JFrame {
         add(lblResults);
 
         // Epoca
-        lblEpochResult = new JLabel("<html>Época: <b>0</b></html>");
+        lblEpochResult = new JLabel("<html>Epoca: <b>0</b></html>");
         lblEpochResult.setLocation(btnRandomWeights.getX(), lblResults.getY() + lblResults.getHeight() + 5);
         lblEpochResult.setSize(lblSubtitle.getWidth(), 18);
         lblEpochResult.setHorizontalAlignment(JLabel.LEFT);
@@ -580,12 +580,12 @@ public class PerceptronWindow extends JFrame {
     public void updateEpoch(int epoch, boolean done, boolean stop) {
         if ( stop ) {
             if ( done ) {
-                lblEpochResult.setText("<html>Convergió en la época: <b>" + epoch + "</b></html>");
+                lblEpochResult.setText("<html>Convergio en la epoca: <b>" + epoch + "</b></html>");
             } else {
-                lblEpochResult.setText("<html>No convergio. Épocas: <b>" + epoch + "</b></html>");
+                lblEpochResult.setText("<html>No convergio. Epocas: <b>" + epoch + "</b></html>");
             }
         } else {
-            lblEpochResult.setText("<html>Época: <b>" + epoch + "</b></html>");
+            lblEpochResult.setText("<html>Epoca: <b>" + epoch + "</b></html>");
         }
     }
 
