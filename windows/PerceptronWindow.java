@@ -54,6 +54,10 @@ public class PerceptronWindow extends JFrame {
     private JMenu jmPredict;
     private JRadioButtonMenuItem jmiPredict;
 
+    private final String unicodeSubscript0 = "\u2080";
+    private final String unicodeSubscript1 = "\u2081";
+    private final String unicodeSubscript2 = "\u2082";
+
     public PerceptronWindow()
     {
         super("Ejemplo de funcionamiento del perceptron");
@@ -119,9 +123,9 @@ public class PerceptronWindow extends JFrame {
                 points.clear();
                 System.arraycopy(defaultWeights, 0, weights, 0, weights.length);
                 map.repaint();
-                lblWeightResult0.setText("<html>w₀ = <b>" + weights[0] + "</b></html>");
-                lblWeightResult1.setText("<html>w₁ = <b>" + weights[1] + "</b></html>");
-                lblWeightResult2.setText("<html>w₂ = <b>" + weights[2] + "</b></html>");
+                lblWeightResult0.setText("<html>w" + unicodeSubscript0 + " = <b>" + weights[0] + "</b></html>");
+                lblWeightResult1.setText("<html>w" + unicodeSubscript1 + " = <b>" + weights[1] + "</b></html>");
+                lblWeightResult2.setText("<html>w" + unicodeSubscript2 + " = <b>" + weights[2] + "</b></html>");
                 txtWeight0.setText(String.valueOf(weights[0]));
                 txtWeight1.setText(String.valueOf(weights[1]));
                 txtWeight2.setText(String.valueOf(weights[2]));
@@ -376,7 +380,7 @@ public class PerceptronWindow extends JFrame {
 
         /** Pesos */
         // Peso 0
-        JLabel lblWeigth0 = new JLabel("w₀");
+        JLabel lblWeigth0 = new JLabel("w" + unicodeSubscript0);
         lblWeigth0.setLocation(lblLearningRate.getX(), txtEpochs.getY() + txtEpochs.getHeight() + 20);
         lblWeigth0.setSize((lblSubtitle.getWidth() / 3) - 15, 25);
         lblWeigth0.setHorizontalAlignment(JLabel.CENTER);
@@ -388,7 +392,7 @@ public class PerceptronWindow extends JFrame {
         txtWeight0.setText(String.valueOf(weights[0]));
         add(txtWeight0);
         // Peso 1
-        JLabel lblWeigth1 = new JLabel("w₁");
+        JLabel lblWeigth1 = new JLabel("w" + unicodeSubscript1);
         lblWeigth1.setLocation(lblSubtitle.getX() + (lblSubtitle.getWidth() / 2) - (txtWeight0.getWidth() / 2), lblWeigth0.getY());
         lblWeigth1.setSize(lblWeigth0.getSize());
         lblWeigth1.setHorizontalAlignment(JLabel.CENTER);
@@ -405,7 +409,7 @@ public class PerceptronWindow extends JFrame {
         txtWeight2.setSize(txtWeight0.getWidth(),txtWeight0.getHeight());
         txtWeight2.setText(String.valueOf(weights[2]));
         add(txtWeight2);
-        JLabel lblWeigth2 = new JLabel("w₂");
+        JLabel lblWeigth2 = new JLabel("w" + unicodeSubscript2);
         lblWeigth2.setLocation(txtWeight2.getX(), txtWeight1.getY() - 30);
         lblWeigth2.setSize(txtWeight2.getWidth(), 25);
         lblWeigth2.setHorizontalAlignment(JLabel.CENTER);
@@ -530,21 +534,21 @@ public class PerceptronWindow extends JFrame {
         add(lblEpochResult);
 
         // Peso 0
-        lblWeightResult0 = new JLabel("<html>w₀ = <b>0.0</b></html>");
+        lblWeightResult0 = new JLabel("<html>w" + unicodeSubscript0 + " = <b>0.0</b></html>");
         lblWeightResult0.setLocation(btnRandomWeights.getX(), lblEpochResult.getY() + lblEpochResult.getHeight() + 5);
         lblWeightResult0.setSize(lblSubtitle.getWidth(), 18);
         lblWeightResult0.setHorizontalAlignment(JLabel.LEFT);
         lblWeightResult0.setFont(new Font("Dialog", Font.PLAIN, 14));
         add(lblWeightResult0);
         // Peso 1
-        lblWeightResult1 = new JLabel("<html>w₁ = <b>0.0</b></html>");
+        lblWeightResult1 = new JLabel("<html>w" + unicodeSubscript1 + " = <b>0.0</b></html>");
         lblWeightResult1.setLocation(btnRandomWeights.getX(), lblWeightResult0.getY() + lblWeightResult0.getHeight() + 5);
         lblWeightResult1.setSize(lblSubtitle.getWidth(), 18);
         lblWeightResult1.setHorizontalAlignment(JLabel.LEFT);
         lblWeightResult1.setFont(new Font("Dialog", Font.PLAIN, 14));
         add(lblWeightResult1);
         // Peso 2
-        lblWeightResult2 = new JLabel("<html>w₂ = <b>0.0</b></html>");
+        lblWeightResult2 = new JLabel("<html>w" + unicodeSubscript2 + " = <b>0.0</b></html>");
         lblWeightResult2.setLocation(btnRandomWeights.getX(), lblWeightResult1.getY() + lblWeightResult1.getHeight() + 5);
         lblWeightResult2.setSize(lblSubtitle.getWidth(), 18);
         lblWeightResult2.setHorizontalAlignment(JLabel.LEFT);
@@ -587,9 +591,9 @@ public class PerceptronWindow extends JFrame {
 
     public void updateWeights(double[] weights) {
         this.weights = weights;
-        lblWeightResult0.setText("<html>w₀ = <b>" + weights[0] + "</b></html>");
-        lblWeightResult1.setText("<html>w₁ = <b>" + weights[1] + "</b></html>");
-        lblWeightResult2.setText("<html>w₂ = <b>" + weights[2] + "</b></html>");
+        lblWeightResult0.setText("<html>w" + unicodeSubscript0 + " = <b>" + weights[0] + "</b></html>");
+        lblWeightResult1.setText("<html>w" + unicodeSubscript1 + " = <b>" + weights[1] + "</b></html>");
+        lblWeightResult2.setText("<html>w" + unicodeSubscript2 + " = <b>" + weights[2] + "</b></html>");
         map.repaint();
     }
 
